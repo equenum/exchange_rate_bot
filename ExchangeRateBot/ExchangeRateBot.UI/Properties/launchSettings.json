@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ExchangeRateBot.UI": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
