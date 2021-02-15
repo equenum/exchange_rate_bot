@@ -26,10 +26,17 @@ namespace ExchangeRateBot.UI
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    
+                    // TODO: Add DI
+                    services.AddTransient<IBot, Bot>();
                 })
                 .UseSerilog()
                 .Build();
+
+            // TODO: Bot.
+            ApiHelper.InitializeApiClient();
+
+            var bot = ActivatorUtilities.CreateInstance<Bot>(host.Services);
+            bot.Run();
         }
 
         static void BuildConfig(IConfigurationBuilder builder)
