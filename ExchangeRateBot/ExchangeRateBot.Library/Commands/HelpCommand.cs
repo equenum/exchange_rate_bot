@@ -31,7 +31,11 @@ namespace ExchangeRateBot.Library.Commands
                                         "/exchangerate - show exchange rate\n" +
                                         "/showcurrlistby - show available currencies for BY\n" +
                                         "/showcurrlistua - show available currencies for UA\n" +
-                                        "/help - show help information";
+                                        "/help - show help information\n\n" +
+                                        "Note: \nUse @botname before every command call.\n\n" +
+                                        "Exchange rate command example:\n" +
+                                        "@botname /exchangerate USD 2021-01-01 BY/UA\n" +
+                                        "Date format: YY-MM-DD";
 
             await _chatMessageSender.SendHelpMessage(message, HelpMessage, telegramBotClient);
         }
