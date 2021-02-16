@@ -8,7 +8,6 @@ namespace ExchangeRateBot.Library.Models
     {
         public string Cur_Abbreviation { get; set; }
         public decimal Cur_OfficialRate { get; set; }
-        public DateTime Date { get; set; } // TODO : Date validation
 
         public string GetHomeCurrency()
         {

@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using ExchangeRateBot.Library.Commands;
+using ExchangeRateBot.Library.Utilities;
+using ExchangeRateBot.Utilities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -26,14 +29,22 @@ namespace ExchangeRateBot.UI
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    // TODO: Add DI
                     services.AddTransient<IBot, Bot>();
+                    services.AddTransient<IExchangeRateMessageValidator, ExchangeRateMessageValidator>();
+                    services.AddTransient<IExchangeRateHandler, ExchangeRateHandler>();
+                    services.AddTransient<IExchangeRateCommand, ExchangeRateCommand>();
+                    services.AddTransient<IShowCurrListBY, ShowCurrListBY>();
+                    services.AddTransient<IShowCurrListUA, ShowCurrListUA>();
+                    services.AddTransient<IStartCommand, StartCommand>();
+                    services.AddTransient<INowCommand, NowCommand>();
+                    services.AddTransient<IHelpCommand, HelpCommand>();
+                    services.AddTransient<IChatMessageSender, ChatMessageSender>();
                 })
                 .UseSerilog()
                 .Build();
 
-            // TODO: Bot.
-            ApiHelper.InitializeApiClient();
+            ApiHandler.InitializeApiClient();
+            BotSettings.BotToken = builder.Build().GetValue<string>("BotApiToken");
 
             var bot = ActivatorUtilities.CreateInstance<Bot>(host.Services);
             bot.Run();

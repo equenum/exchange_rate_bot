@@ -1,4 +1,5 @@
 ﻿using ExchangeRateBot.Library.Models;
+using ExchangeRateBot.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,26 +9,11 @@ using System.Threading.Tasks;
 
 namespace ExchangeRateBot.Library.Utilities
 {
-    public class ExchangeRateHandler
+    public class ExchangeRateHandler : IExchangeRateHandler
     {
         private string _currency;
         private string _country;
         private DateTime _date;
-
-        public string Input
-        {
-            set
-            {
-                var message = value.Split(' ');
-
-                _currency = message[2];
-                _date = DateTime.ParseExact(
-                    message[3], "yyyy-MM-dd",
-                    System.Globalization.CultureInfo.InvariantCulture
-                    );
-                _country = message[4];
-            }
-        }
 
         public async Task<IExchangeRate> LoadExchangeRate()
         {
@@ -42,7 +28,7 @@ namespace ExchangeRateBot.Library.Utilities
                 case "UA":
                     url = $"https://api.privatbank.ua/p24api/exchange_rates?json&date={ _date.Day }.{ _date.Month }.{ _date.Year }";
                     var resultExchangeRatesUA = await Get<ExchangeRateUAResults>(url);
-                    var resultExchangeRateUA = resultExchangeRatesUA.ExchangeRate.Where(x => x.GetTargetCurrency() == _currency).First();
+                    var resultExchangeRateUA = resultExchangeRatesUA.ExchangeRate.Where(x => x.GetTargetCurrency() == _currency).FirstOrDefault();
                     return resultExchangeRateUA;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -50,7 +36,7 @@ namespace ExchangeRateBot.Library.Utilities
 
             async Task<T> Get<T>(string apiUrl)
             {
-                using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(apiUrl))
+                using (HttpResponseMessage response = await ApiHandler.ApiClient.GetAsync(apiUrl))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -60,10 +46,24 @@ namespace ExchangeRateBot.Library.Utilities
                     }
                     else
                     {
-                        throw new Exception(response.ReasonPhrase);
+                        Console.WriteLine(response.ReasonPhrase); // Logging
+
+                        return default;
                     }
                 }
             }
+        }
+
+        public void SetNewInput(string inputMessage)
+        {
+            var message = inputMessage.Split(' ');
+
+            _currency = message[2];
+            _date = DateTime.ParseExact(
+                message[3], "yyyy-MM-dd",
+                System.Globalization.CultureInfo.InvariantCulture
+                );
+            _country = message[4];
         }
     }
 }

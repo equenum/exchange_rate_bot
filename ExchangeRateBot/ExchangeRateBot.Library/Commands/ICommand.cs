@@ -9,8 +9,6 @@ namespace ExchangeRateBot.Library.Commands
 {
     public interface ICommand
     {
-        string Name { get; }
-
         Task Execute(Message message, ITelegramBotClient telegramBotClient);
         bool Contains(string command);
     }

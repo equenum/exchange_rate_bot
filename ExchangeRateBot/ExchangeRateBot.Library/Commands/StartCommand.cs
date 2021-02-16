@@ -5,28 +5,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
 namespace ExchangeRateBot.Library.Commands
 {
-    public class HelpCommand : IHelpCommand
+    public class StartCommand : IStartCommand
     {
         private readonly IChatMessageSender _chatMessageSender;
         private readonly string _name;
 
-        public HelpCommand(IChatMessageSender chatMessageSender)
+        public StartCommand(IChatMessageSender chatMessageSender)
         {
-            _name = "/HELP";
+            _name = "/START";
             _chatMessageSender = chatMessageSender;
         }
 
         public async Task Execute(Message message, ITelegramBotClient telegramBotClient)
         {
-            const string HelpMessage = "You can control me by sending these commands:\n\n" +
-                                        "/now - send current date and time\n" +
-                                        "/test - send test message\n";
+            string startMessage = "Start message, dude!";
 
-            await _chatMessageSender.SendHelpMessage(message, HelpMessage, telegramBotClient);
+            await _chatMessageSender.SendStartMessage(message, startMessage, telegramBotClient);
         }
 
         public bool Contains(string command)

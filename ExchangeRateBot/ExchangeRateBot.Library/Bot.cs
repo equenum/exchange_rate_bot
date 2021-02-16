@@ -1,4 +1,5 @@
 ﻿using ExchangeRateBot.Library.Commands;
+using ExchangeRateBot.Library.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,11 +10,39 @@ namespace ExchangeRateBot
 {
     public class Bot : IBot
     {
-        // TODO: No data notification
-        private TelegramBotClient _botClient;
-        private List<ICommand> _commands = new List<ICommand>(); // rename later
+        // TODO: XML-comments
+        // TODO: Update Help command result; add BYR (2016) and RUR (1998) notification
+        // TODO: Unit-tests
+        // TODO: Logging
+        // TODO: Factory
 
-        //public IReadOnlyList<ICommand> Commands { get => CommandsList.AsReadOnly(); }
+        private ITelegramBotClient _botClient;
+        private List<ICommand> _commands = new List<ICommand>();
+        private IExchangeRateCommand _exchangeRateCommand;
+        private readonly IChatMessageSender _chatMessageSender;
+        private readonly IShowCurrListBY _showCurrListBY;
+        private readonly IShowCurrListUA _showCurrListUA;
+        private readonly IStartCommand _startCommand;
+        private readonly INowCommand _nowCommand;
+        private readonly IHelpCommand _helpCommand;
+
+        public Bot(
+            IExchangeRateCommand exchangeRateCommand, 
+            IShowCurrListBY showCurrListBY, 
+            IShowCurrListUA showCurrListUA, 
+            IStartCommand startCommand, 
+            INowCommand nowCommand, 
+            IHelpCommand helpCommand,
+            IChatMessageSender chatMessageSender)
+        {
+            _exchangeRateCommand = exchangeRateCommand;
+            _chatMessageSender = chatMessageSender;
+            _showCurrListBY = showCurrListBY;
+            _showCurrListUA = showCurrListUA;
+            _startCommand = startCommand;
+            _nowCommand = nowCommand;
+            _helpCommand = helpCommand;
+        }
 
         public void Run()
         {
@@ -26,7 +55,6 @@ namespace ExchangeRateBot
             }
 
             AddCommands();
-
 
             var me = _botClient.GetMeAsync().Result;
 
@@ -42,8 +70,6 @@ namespace ExchangeRateBot
 
             _botClient.StartReceiving(Array.Empty<UpdateType>());
 
-            //Console.WriteLine($"Start listening for @{me.Username}"); // TODO: What is that?
-
             Console.WriteLine("Press any key to exit");
             Console.ReadKey();
 
@@ -54,22 +80,31 @@ namespace ExchangeRateBot
             async void _botClient_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
             {
                 var message = e.Message;
+                bool unrecognizedCommand = true;
 
                 foreach (var command in _commands)
                 {
                     if (command.Contains(message.Text.ToUpper()))
                     {
                         await command.Execute(message, _botClient);
+                        unrecognizedCommand = false;
                     }
+                }
+
+                if (unrecognizedCommand == true)
+                {
+                    await _chatMessageSender.SendUnrecognizedCommandMessage(message, _botClient);
                 }
             }
 
             void AddCommands()
             {
-                _commands.Add(new TestCommand()); // TODO: Delete later
-                _commands.Add(new NowCommand()); // TODO: Extract a method for that
-                _commands.Add(new HelpCommand());
-                _commands.Add(new ExchangeRateCommand());
+                _commands.Add(_helpCommand);
+                _commands.Add(_nowCommand);
+                _commands.Add(_exchangeRateCommand);
+                _commands.Add(_showCurrListBY);
+                _commands.Add(_showCurrListUA);
+                _commands.Add(_startCommand);
             }
         }
     }

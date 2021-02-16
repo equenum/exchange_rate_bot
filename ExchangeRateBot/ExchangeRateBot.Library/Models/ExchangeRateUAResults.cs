@@ -6,7 +6,6 @@ namespace ExchangeRateBot.Library.Models
 {
     public class ExchangeRateUAResults
     {
-        public DateTime Date { get; set; }
         public List<ExchangeRateUA> ExchangeRate { get; set; }
     }
 }

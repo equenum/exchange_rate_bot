@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExchangeRateBot.Library.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,33 +9,25 @@ using Telegram.Bot.Types.Enums;
 
 namespace ExchangeRateBot.Library.Commands
 {
-    public class NowCommand : ICommand
+    public class NowCommand : INowCommand
     {
-        public string Name { get; }
+        private readonly IChatMessageSender _chatMessageSender;
+        private readonly string _name;
 
-        public NowCommand()
+        public NowCommand(IChatMessageSender chatMessageSender)
         {
-            Name = "/NOW";
+            _name = "/NOW";
+            _chatMessageSender = chatMessageSender;
         }
 
         public async Task Execute(Message message, ITelegramBotClient telegramBotClient)
         {
-            await telegramBotClient.SendTextMessageAsync(
-                       chatId: message.Chat,
-                       text: $"Current date and time:  { DateTime.Now.ToLocalTime() }",
-                       parseMode: ParseMode.Markdown,
-                       disableNotification: true,
-                       replyToMessageId: message.MessageId
-                   //replyMarkup: new InlineKeyboardMarkup(InlineKeyboardButton.WithUrl(
-                   //"Check detailed info",
-                   //"https://core.telegram.org/bots/api#sendmessage"
-                   //))
-                   );
+            await _chatMessageSender.SendNowMessage(message, telegramBotClient);
         }
 
         public bool Contains(string command)
         {
-            return command.Contains($"@{ BotSettings.Name }") && command.Contains(this.Name);
+            return command.Contains($"@{ BotSettings.Name }") && command.Contains(this._name);
         }
     }
 }

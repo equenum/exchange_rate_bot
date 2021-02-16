@@ -4,9 +4,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace ExchangeRateBot
+namespace ExchangeRateBot.Utilities
 {
-    public static class ApiHelper
+    public static class ApiHandler
     {
         public static HttpClient ApiClient { get; set; }
 

@@ -9,59 +9,56 @@ using Telegram.Bot.Types.Enums;
 
 namespace ExchangeRateBot.Library.Commands
 {
-    public class ExchangeRateCommand : ICommand
+    public class ExchangeRateCommand : IExchangeRateCommand
     {
-        private readonly ExchangeRateMessageValidator _exchangeMessageValidator; // TODO : DI
-        private readonly ExchangeRateHandler _exchangeRateHandler;
+        private readonly IExchangeRateMessageValidator _exchangeMessageValidator;
+        private readonly IExchangeRateHandler _exchangeRateHandler;
+        private readonly IChatMessageSender _chatMessageSender;
+        private readonly string _name;
 
-        public string Name { get; }
-
-        public ExchangeRateCommand()
+        public ExchangeRateCommand(
+            IExchangeRateMessageValidator exchangeMessageValidator, 
+            IExchangeRateHandler exchangeRateHandler, 
+            IChatMessageSender chatMessageSender)
         {
-            Name = "/EXCHANGERATE";
-
-            _exchangeMessageValidator = new ExchangeRateMessageValidator();
-            _exchangeRateHandler = new ExchangeRateHandler();
+            _name = "/EXCHANGERATE";
+            _exchangeMessageValidator = exchangeMessageValidator;
+            _exchangeRateHandler = exchangeRateHandler;
+            _chatMessageSender = chatMessageSender;
         }
 
         public async Task Execute(Message message, ITelegramBotClient telegramBotClient)
         {
             var messageText = message.Text;
 
-            _exchangeMessageValidator.Input = messageText; // TODO : Create a method to set this parameter 
+            _exchangeMessageValidator.SetNewInput(messageText);
 
             if (_exchangeMessageValidator.Validate())
             {
-                _exchangeRateHandler.Input = messageText; // TODO : Create a method to set this parameter 
+                _exchangeRateHandler.SetNewInput(messageText);
 
                 var exchangeRate = await _exchangeRateHandler.LoadExchangeRate();
 
-                await telegramBotClient.SendTextMessageAsync(
-                        chatId: message.Chat,
-                        text: $"{ exchangeRate.GetTargetCurrency() } / { exchangeRate.GetHomeCurrency() } : " +
-                              $"{ exchangeRate.GetRate() }",
-                        parseMode: ParseMode.Markdown,
-                        disableNotification: true,
-                        replyToMessageId: message.MessageId
-                    );
+                if (exchangeRate != null)
+                {
+                    await _chatMessageSender.SendExchangeRateMessage(message, exchangeRate, telegramBotClient);
+                }
+                else
+                {
+                    await _chatMessageSender.SendUnavailableRateMessage(message, telegramBotClient);
+                }
             }
             else
             {
                 var errorMessage = _exchangeMessageValidator.GetErrorMessage();
 
-                await telegramBotClient.SendTextMessageAsync(
-                        chatId: message.Chat,
-                        text: errorMessage,
-                        parseMode: ParseMode.Markdown,
-                        disableNotification: true,
-                        replyToMessageId: message.MessageId
-                    );
+                await _chatMessageSender.SendValidationErrorMessage(message, errorMessage, telegramBotClient);
             }
         }
 
         public bool Contains(string command)
         {
-            return command.Contains($"@{ BotSettings.Name }") && command.Contains(this.Name);
+            return command.Contains($"@{ BotSettings.Name }") && command.Contains(this._name);
         }
     }
 }

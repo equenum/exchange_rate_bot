@@ -4,25 +4,20 @@ using System.Text;
 
 namespace ExchangeRateBot.Library.Utilities
 {
-    public class ExchangeRateMessageValidator
+    public class ExchangeRateMessageValidator : IExchangeRateMessageValidator
     {
+        private readonly DateTime _archiveBeginningDateBY;
+        private readonly DateTime _archiveBeginningDateUA;
         private string _errorMessage;
-
-        public string Input
-        {
-            set
-            {
-                var message = value.Split(' ');
-
-                _currency = message[2];
-                _date = message[3];
-                _country = message[4];
-            }
-        }
-
         private string _currency;
         private string _date;
         private string _country;
+
+        public ExchangeRateMessageValidator()
+        {
+            _archiveBeginningDateBY = new DateTime(1996, 1, 1);
+            _archiveBeginningDateUA = new DateTime(2010, 1, 1);
+        }
 
         public bool Validate()
         {
@@ -37,15 +32,26 @@ namespace ExchangeRateBot.Library.Utilities
 
             bool CurrencyIsValid()
             {
-                if (Enum.IsDefined(typeof(SupportedCurrencies), _currency))
-                {
-                    return true;
-                }
-                else
-                {
-                    _errorMessage = "Invalid currency code!";
+                bool result = true;
 
-                    return false;
+                switch (_country)
+                {
+                    case "BY":
+                        result = Enum.IsDefined(typeof(SupportedCurrenciesBY), _currency);
+                        if (result == false)
+                        {
+                            _errorMessage = "Invalid currency code!";
+                        }
+                        return result;
+                    case "UA":
+                        result = Enum.IsDefined(typeof(SupportedCurrenciesUA), _currency);
+                        if (result == false)
+                        {
+                            _errorMessage = "Invalid currency code!";
+                        }
+                        return result;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
 
@@ -91,14 +97,16 @@ namespace ExchangeRateBot.Library.Utilities
                     return result;
                 }
 
+                return result;
+
                 bool YearIsValid()
                 {
                     switch (_country)
                     {
                         case "BY":
-                            return date.Year <= currentDate.Year && date.Year >= 1995;
+                            return date.Year <= currentDate.Year && date.Year >= _archiveBeginningDateBY.Year;
                         case "UA":
-                            return date.Year <= currentDate.Year && date.Year >= (currentDate.Year - 4);
+                            return date.Year <= currentDate.Year && date.Year >= _archiveBeginningDateUA.Year;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -106,15 +114,29 @@ namespace ExchangeRateBot.Library.Utilities
 
                 bool MonthIsValid()
                 {
-                    return date.Month <= currentDate.Month;
+                    switch (_country)
+                    {
+                        case "BY":
+                            return date.Month <= currentDate.Month && date.Month >= _archiveBeginningDateBY.Month;
+                        case "UA":
+                            return date.Month <= currentDate.Month && date.Month >= _archiveBeginningDateUA.Month;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
 
                 bool DayIsValid()
                 {
-                    return date.Day <= currentDate.Day;
+                    switch (_country)
+                    {
+                        case "BY":
+                            return date.Day <= currentDate.Day && date.Day >= _archiveBeginningDateBY.Day;
+                        case "UA":
+                            return date.Day <= currentDate.Day && date.Day >= _archiveBeginningDateUA.Day;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
-
-                return result;
             }
         }
 
@@ -124,6 +146,15 @@ namespace ExchangeRateBot.Library.Utilities
             _errorMessage = string.Empty;
 
             return message;
+        }
+
+        public void SetNewInput(string inputMessage)
+        {
+            var message = inputMessage.Split(' ');
+
+            _currency = message[2];
+            _date = message[3];
+            _country = message[4];
         }
     }
 }
