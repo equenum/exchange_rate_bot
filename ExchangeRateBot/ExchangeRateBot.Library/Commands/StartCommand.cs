@@ -8,6 +8,9 @@ using Telegram.Bot.Types;
 
 namespace ExchangeRateBot.Library.Commands
 {
+    /// <summary>
+    /// Represents a start command.
+    /// </summary>
     public class StartCommand : IStartCommand
     {
         private readonly IChatMessageSender _chatMessageSender;
@@ -21,7 +24,9 @@ namespace ExchangeRateBot.Library.Commands
 
         public async Task Execute(Message message, ITelegramBotClient telegramBotClient)
         {
-            string startMessage = "Start message, dude!";
+            string startMessage = $"Hello! I can help you get exchange rate records\n" +
+                                  $"from Belarusian and Ukrainian national banks archives.\n\n" +
+                                  $"Use /help to get instructions.";
 
             await _chatMessageSender.SendStartMessage(message, startMessage, telegramBotClient);
         }

@@ -4,12 +4,18 @@ using System.Text;
 
 namespace ExchangeRateBot
 {
+    /// <summary>
+    /// Represents a list of supported countries.
+    /// </summary>
     public enum SupportedContries
     {
         BY,
         UA
     }
 
+    /// <summary>
+    /// Represents a list of supported currencies fo Ukraine.
+    /// </summary>
     public enum SupportedCurrenciesUA 
     {
         AZN,
@@ -39,6 +45,9 @@ namespace ExchangeRateBot
         GEL
     }
 
+    /// <summary>
+    /// Represents a list of supported currencies fo Belarus.
+    /// </summary>
     public enum SupportedCurrenciesBY
     {
         AZN,

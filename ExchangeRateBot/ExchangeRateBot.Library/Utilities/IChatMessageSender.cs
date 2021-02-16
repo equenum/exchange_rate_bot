@@ -5,6 +5,9 @@ using Telegram.Bot.Types;
 
 namespace ExchangeRateBot.Library.Utilities
 {
+    /// <summary>
+    /// Represents an interface for ChatMessageSender.
+    /// </summary>
     public interface IChatMessageSender
     {
         Task SendExchangeRateMessage(Message message, IExchangeRate exchangeRate, ITelegramBotClient telegramBotClient);

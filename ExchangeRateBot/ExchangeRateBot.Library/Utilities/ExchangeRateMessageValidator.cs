@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ExchangeRateBot.Library.Utilities
 {
+    /// <summary>
+    /// Represents an exchange rate message validator.
+    /// </summary>
     public class ExchangeRateMessageValidator : IExchangeRateMessageValidator
     {
         private readonly DateTime _archiveBeginningDateBY;

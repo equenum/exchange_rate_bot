@@ -8,6 +8,9 @@ using Telegram.Bot.Types;
 
 namespace ExchangeRateBot.Library.Commands
 {
+    /// <summary>
+    /// Represents a class for showing available currency list for Ukraine. 
+    /// </summary>
     public class ShowCurrListUA : IShowCurrListUA
     {
         private readonly IChatMessageSender _chatMessageSender;

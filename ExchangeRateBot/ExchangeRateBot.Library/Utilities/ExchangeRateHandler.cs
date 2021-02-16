@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace ExchangeRateBot.Library.Utilities
 {
+    /// <summary>
+    /// Represents an exchange rate handler.
+    /// </summary>
     public class ExchangeRateHandler : IExchangeRateHandler
     {
         private string _currency;

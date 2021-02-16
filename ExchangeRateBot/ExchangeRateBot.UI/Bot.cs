@@ -9,11 +9,11 @@ using Telegram.Bot.Types.Enums;
 
 namespace ExchangeRateBot.UI
 {
+    /// <summary>
+    /// Representa a telegram bot.
+    /// </summary>
     public class Bot : IBot
     {
-        // TODO: XML-comments
-        // TODO: Unit-tests
-
         private ITelegramBotClient _botClient;
         private List<ICommand> _commands = new List<ICommand>();
         private IExchangeRateCommand _exchangeRateCommand;

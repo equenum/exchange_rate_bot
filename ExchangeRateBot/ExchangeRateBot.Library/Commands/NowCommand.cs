@@ -9,6 +9,9 @@ using Telegram.Bot.Types.Enums;
 
 namespace ExchangeRateBot.Library.Commands
 {
+    /// <summary>
+    /// Representa a class for showing current date and time command. 
+    /// </summary>
     public class NowCommand : INowCommand
     {
         private readonly IChatMessageSender _chatMessageSender;

@@ -9,6 +9,9 @@ using Telegram.Bot.Types.Enums;
 
 namespace ExchangeRateBot.Library.Commands
 {
+    /// <summary>
+    /// Represents a class for showing exchange rate command.
+    /// </summary>
     public class ExchangeRateCommand : IExchangeRateCommand
     {
         private readonly IExchangeRateMessageValidator _exchangeMessageValidator;

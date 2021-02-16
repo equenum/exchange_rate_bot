@@ -9,6 +9,9 @@ using Telegram.Bot.Types.Enums;
 
 namespace ExchangeRateBot.Library.Commands
 {
+    /// <summary>
+    /// Represents a help command class.
+    /// </summary>
     public class HelpCommand : IHelpCommand
     {
         private readonly IChatMessageSender _chatMessageSender;
