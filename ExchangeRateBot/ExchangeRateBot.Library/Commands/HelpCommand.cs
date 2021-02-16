@@ -23,8 +23,12 @@ namespace ExchangeRateBot.Library.Commands
         public async Task Execute(Message message, ITelegramBotClient telegramBotClient)
         {
             const string HelpMessage = "You can control me by sending these commands:\n\n" +
-                                        "/now - send current date and time\n" +
-                                        "/test - send test message\n";
+                                        "/start - start bot\n" +
+                                        "/now - show current date and time\n" +
+                                        "/exchangerate - show exchange rate\n" +
+                                        "/showcurrlistby - show available currencies for BY\n" +
+                                        "/showcurrlistua - show available currencies for UA\n" +
+                                        "/help - show help information";
 
             await _chatMessageSender.SendHelpMessage(message, HelpMessage, telegramBotClient);
         }

@@ -16,7 +16,7 @@ namespace ExchangeRateBot.UI
         {
             var builder = new ConfigurationBuilder();
             BuildConfig(builder);
-
+            
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(builder.Build())
                 .Enrich.FromLogContext()
@@ -24,7 +24,7 @@ namespace ExchangeRateBot.UI
                 .WriteTo.File("log-.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
-            Log.Logger.Information("Application starting");
+            Log.Information("Application starting.");
 
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>

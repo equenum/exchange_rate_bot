@@ -1,20 +1,18 @@
 ﻿using ExchangeRateBot.Library.Commands;
 using ExchangeRateBot.Library.Utilities;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
-namespace ExchangeRateBot
+namespace ExchangeRateBot.UI
 {
     public class Bot : IBot
     {
         // TODO: XML-comments
-        // TODO: Update Help command result; add BYR (2016) and RUR (1998) notification
         // TODO: Unit-tests
-        // TODO: Logging
-        // TODO: Factory
 
         private ITelegramBotClient _botClient;
         private List<ICommand> _commands = new List<ICommand>();
@@ -57,6 +55,7 @@ namespace ExchangeRateBot
             AddCommands();
 
             var me = _botClient.GetMeAsync().Result;
+            Log.Information("Bot client acquired.");
 
             Console.WriteLine(
               $"Hello, World! I am user {me.Id} and my name is {me.FirstName}."
@@ -79,6 +78,8 @@ namespace ExchangeRateBot
 
             async void _botClient_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
             {
+                Log.Information("Bot recieved a message.");
+
                 var message = e.Message;
                 bool unrecognizedCommand = true;
 
@@ -94,6 +95,8 @@ namespace ExchangeRateBot
                 if (unrecognizedCommand == true)
                 {
                     await _chatMessageSender.SendUnrecognizedCommandMessage(message, _botClient);
+
+                    Log.Error("Unrecognized command.");
                 }
             }
 

@@ -12,11 +12,15 @@ namespace ExchangeRateBot.Library.Commands
     {
         private readonly IChatMessageSender _chatMessageSender;
         private readonly string _supportedCurrencies;
+        private readonly string _headNoteMessage;
+        private readonly string _footNoteMessage;
         private readonly string _name;
 
         public ShowCurrListUA(IChatMessageSender chatMessageSender)
         {
             _name = "/SHOWCURRLISTUA";
+            _headNoteMessage = "Available currencies for UA:";
+            _footNoteMessage = "Note: Use 'BYR' instead of 'BYN' for 2016 and earlier years.";
             _chatMessageSender = chatMessageSender;
             _supportedCurrencies = GetValuesFromEnum();
 
@@ -48,7 +52,11 @@ namespace ExchangeRateBot.Library.Commands
 
         public async Task Execute(Message message, ITelegramBotClient telegramBotClient)
         {
-            await _chatMessageSender.SendShowCurrListMessage(message, _supportedCurrencies, telegramBotClient);
+            string availableCurrencies = $"{ _headNoteMessage }\n" +
+                                         $"{ _supportedCurrencies }\n\n" +
+                                         $"{ _footNoteMessage }";
+
+            await _chatMessageSender.SendShowCurrListMessage(message, availableCurrencies, telegramBotClient);
         }
     }
 }

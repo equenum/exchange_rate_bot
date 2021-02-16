@@ -46,7 +46,7 @@ namespace ExchangeRateBot.Library.Utilities
                     }
                     else
                     {
-                        Console.WriteLine(response.ReasonPhrase); // Logging
+                        Console.WriteLine(response.ReasonPhrase);
 
                         return default;
                     }

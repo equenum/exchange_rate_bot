@@ -1,4 +1,4 @@
-﻿namespace ExchangeRateBot
+﻿namespace ExchangeRateBot.UI
 {
     public interface IBot
     {

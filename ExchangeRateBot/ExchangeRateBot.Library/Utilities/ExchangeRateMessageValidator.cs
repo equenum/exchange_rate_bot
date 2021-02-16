@@ -134,7 +134,7 @@ namespace ExchangeRateBot.Library.Utilities
                         case "UA":
                             return date.Day <= currentDate.Day && date.Day >= _archiveBeginningDateUA.Day;
                         default:
-                            throw new ArgumentOutOfRangeException();
+                            throw new ArgumentOutOfRangeException(); 
                     }
                 }
             }
