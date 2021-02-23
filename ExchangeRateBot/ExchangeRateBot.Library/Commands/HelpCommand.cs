@@ -12,18 +12,18 @@ namespace ExchangeRateBot.Library.Commands
     /// <summary>
     /// Represents a help command class.
     /// </summary>
-    public class HelpCommand : IHelpCommand
+    public class HelpCommand : ICommand
     {
         private readonly IChatMessageSender _chatMessageSender;
-        private readonly string _name;
+
+        public CommandType CommandType => CommandType.Help;
 
         public HelpCommand(IChatMessageSender chatMessageSender)
         {
-            _name = "/HELP";
             _chatMessageSender = chatMessageSender;
         }
 
-        public async Task Execute(Message message, ITelegramBotClient telegramBotClient)
+        public async Task ExecuteAsync(Message message, ITelegramBotClient telegramBotClient)
         {
             const string HelpMessage = "You can control me by sending these commands:\n\n" +
                                         "/start - start bot\n" +
@@ -37,12 +37,7 @@ namespace ExchangeRateBot.Library.Commands
                                         "@botname /exchangerate USD 2021-01-01 BY/UA\n" +
                                         "Date format: YY-MM-DD";
 
-            await _chatMessageSender.SendHelpMessage(message, HelpMessage, telegramBotClient);
-        }
-
-        public bool Contains(string command)
-        {
-            return command.Contains($"@{ BotSettings.Name }") && command.Contains(this._name);
+            await _chatMessageSender.SendHelpMessageAsync(message, HelpMessage, telegramBotClient);
         }
     }
 }

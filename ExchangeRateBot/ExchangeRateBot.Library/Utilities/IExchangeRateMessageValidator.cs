@@ -1,4 +1,6 @@
-﻿namespace ExchangeRateBot.Library.Utilities
+﻿using ExchangeRateBot.Library.Models;
+
+namespace ExchangeRateBot.Library.Utilities
 {
     /// <summary>
     /// Represents an interface for exchange rate message validator.
@@ -6,15 +8,20 @@
     public interface IExchangeRateMessageValidator
     {
         /// <summary>
+        /// Represents current exchange rate request.
+        /// </summary>
+        public IInputRequest Request { get; set; }
+
+        /// <summary>
         /// Gets validation error message.
         /// </summary>
         /// <returns>Validation error message</returns>
         string GetErrorMessage();
         /// <summary>
-        /// Sets new input value for validation.
+        /// Sets new input exchange rate request for validation.
         /// </summary>
-        /// <param name="inputMessage">Input chat value.</param>
-        void SetNewInput(string inputMessage);
+        /// <param name="inputMessage">Input chat request.</param>
+        void SetNewInputRequest(string inputMessage);
         /// <summary>
         /// Validates chat message.
         /// </summary>

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ExchangeRateBot.Library.Models;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,9 +14,9 @@ namespace ExchangeRateBot.Library.Utilities
         private readonly DateTime _archiveBeginningDateBY;
         private readonly DateTime _archiveBeginningDateUA;
         private string _errorMessage;
-        private string _currency;
-        private string _date;
-        private string _country;
+        private string[] _inputMessage;
+
+        public IInputRequest Request { get; set; }
 
         public ExchangeRateMessageValidator()
         {
@@ -24,122 +26,27 @@ namespace ExchangeRateBot.Library.Utilities
 
         public bool Validate()
         {
-            if (CurrencyIsValid() && CountryIsValid() && DateIsValid())
+            if (_inputMessage.Length >= 4 && _inputMessage.Length < 6)
             {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+                CreateRequest();
 
-            bool CurrencyIsValid()
-            {
-                bool result = true;
-
-                switch (_country)
-                {
-                    case "BY":
-                        result = Enum.IsDefined(typeof(SupportedCurrenciesBY), _currency);
-                        if (result == false)
-                        {
-                            _errorMessage = "Invalid currency code!";
-                        }
-                        return result;
-                    case "UA":
-                        result = Enum.IsDefined(typeof(SupportedCurrenciesUA), _currency);
-                        if (result == false)
-                        {
-                            _errorMessage = "Invalid currency code!";
-                        }
-                        return result;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            bool CountryIsValid()
-            {
-                if (Enum.IsDefined(typeof(SupportedContries), _country))
+                if (CountryIsValid() && CurrencyIsValid() && DateIsValid())
                 {
                     return true;
                 }
                 else
                 {
-                    _errorMessage = "Invalid counrty code!";
+                    Log.Error($"Exchange rate request validation error: { _errorMessage }.");
 
                     return false;
                 }
             }
-
-            bool DateIsValid()
+            else
             {
-                DateTime date;
-                DateTime currentDate = DateTime.Now;
+                _errorMessage = "Invalid command format!";
+                Log.Error($"Exchange rate request validation error: { _errorMessage }.");
 
-                bool result = false;
-
-                try
-                {
-                    date = DateTime.ParseExact(_date, "yyyy-MM-dd",
-                                      System.Globalization.CultureInfo.InvariantCulture);
-
-                    if (YearIsValid() && MonthIsValid() && DayIsValid())
-                    {
-                        result = true;
-                    }
-                    else
-                    {
-                        _errorMessage = "Invalid date!";
-                    }
-                }
-                catch (Exception)
-                {
-                    _errorMessage = "Invalid date!";
-
-                    return result;
-                }
-
-                return result;
-
-                bool YearIsValid()
-                {
-                    switch (_country)
-                    {
-                        case "BY":
-                            return date.Year <= currentDate.Year && date.Year >= _archiveBeginningDateBY.Year;
-                        case "UA":
-                            return date.Year <= currentDate.Year && date.Year >= _archiveBeginningDateUA.Year;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-
-                bool MonthIsValid()
-                {
-                    switch (_country)
-                    {
-                        case "BY":
-                            return date.Month <= currentDate.Month && date.Month >= _archiveBeginningDateBY.Month;
-                        case "UA":
-                            return date.Month <= currentDate.Month && date.Month >= _archiveBeginningDateUA.Month;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-
-                bool DayIsValid()
-                {
-                    switch (_country)
-                    {
-                        case "BY":
-                            return date.Day <= currentDate.Day && date.Day >= _archiveBeginningDateBY.Day;
-                        case "UA":
-                            return date.Day <= currentDate.Day && date.Day >= _archiveBeginningDateUA.Day;
-                        default:
-                            throw new ArgumentOutOfRangeException(); 
-                    }
-                }
+                return false;
             }
         }
 
@@ -151,13 +58,165 @@ namespace ExchangeRateBot.Library.Utilities
             return message;
         }
 
-        public void SetNewInput(string inputMessage)
+        public void SetNewInputRequest(string inputMessage)
         {
-            var message = inputMessage.Split(' ');
+            _inputMessage = inputMessage.Split(' ');
+        }
 
-            _currency = message[2];
-            _date = message[3];
-            _country = message[4];
+        private void CreateRequest()
+        {
+            IInputRequest inputRequest = Factory.CreateInputRequest();
+
+            if (_inputMessage.Length == 4)
+            {
+                inputRequest.Currency = _inputMessage[2];
+                inputRequest.Date = _inputMessage[3];
+
+                Request = inputRequest;
+            }
+            else
+            {
+                inputRequest.Currency = _inputMessage[2];
+                inputRequest.Date = _inputMessage[3];
+                inputRequest.Country = _inputMessage[4];
+
+                Request = inputRequest;
+            }
+        }
+
+        private bool CurrencyIsValid()
+        {
+            if (Request.Country != null)
+            {
+                bool result;
+
+                switch (Request.Country)
+                {
+                    case "BY":
+                        result = Enum.IsDefined(typeof(SupportedCurrenciesBY), Request.Currency);
+                        if (result == false)
+                        {
+                            _errorMessage = "Invalid currency code!";
+                        }
+                        return result;
+                    case "UA":
+                        result = Enum.IsDefined(typeof(SupportedCurrenciesUA), Request.Currency);
+                        if (result == false)
+                        {
+                            _errorMessage = "Invalid currency code!";
+                        }
+                        return result;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool CountryIsValid()
+        {
+            if (Request.Country != null)
+            {
+                if (Enum.IsDefined(typeof(SupportedContries), Request.Country))
+                {
+                    return true;
+                }
+                else
+                {
+                    _errorMessage = "Invalid counrty code!";
+
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool DateIsValid()
+        {
+            DateTime date;
+            DateTime currentDate = DateTime.Now;
+
+            bool result = false;
+
+            try
+            {
+                date = DateTime.ParseExact(Request.Date, "yyyy-MM-dd",
+                                  System.Globalization.CultureInfo.InvariantCulture);
+
+                if (YearIsValid(date, currentDate) && MonthIsValid(date, currentDate) && DayIsValid(date, currentDate))
+                {
+                    result = true;
+                }
+                else
+                {
+                    _errorMessage = "Invalid date!";
+                }
+            }
+            catch (Exception)
+            {
+                _errorMessage = "Invalid date!";
+
+                return result;
+            }
+
+            return result;
+        }
+
+        bool YearIsValid(DateTime date, DateTime currentDate)
+        {
+            if (Request.Country != null)
+            {
+                return Request.Country switch
+                {
+                    "BY" => date.Year <= currentDate.Year && date.Year >= _archiveBeginningDateBY.Year,
+                    "UA" => date.Year <= currentDate.Year && date.Year >= _archiveBeginningDateUA.Year,
+                    _ => throw new ArgumentOutOfRangeException(),
+                };
+            }
+            else
+            {
+                return date.Year <= currentDate.Year && date.Year >= _archiveBeginningDateUA.Year;
+            }
+        }
+
+        bool MonthIsValid(DateTime date, DateTime currentDate)
+        {
+            if (Request.Country != null)
+            {
+                return Request.Country switch
+                {
+                    "BY" => date.Month <= currentDate.Month && date.Month >= _archiveBeginningDateBY.Month,
+                    "UA" => date.Month <= currentDate.Month && date.Month >= _archiveBeginningDateUA.Month,
+                    _ => throw new ArgumentOutOfRangeException(),
+                };
+            }
+            else
+            {
+                return date.Month <= currentDate.Month && date.Month >= _archiveBeginningDateUA.Month;
+            }
+        }
+
+        bool DayIsValid(DateTime date, DateTime currentDate)
+        {
+            if (Request.Country != null)
+            {
+                return Request.Country switch
+                {
+                    "BY" => date.Day <= currentDate.Day && date.Day >= _archiveBeginningDateBY.Day,
+                    "UA" => date.Day <= currentDate.Day && date.Day >= _archiveBeginningDateUA.Day,
+                    _ => throw new ArgumentOutOfRangeException(),
+                };
+            }
+            else
+            {
+                return date.Day <= currentDate.Day && date.Day >= _archiveBeginningDateUA.Day;
+            }
         }
     }
 }

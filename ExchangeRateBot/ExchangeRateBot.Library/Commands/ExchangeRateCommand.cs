@@ -12,56 +12,51 @@ namespace ExchangeRateBot.Library.Commands
     /// <summary>
     /// Represents a class for showing exchange rate command.
     /// </summary>
-    public class ExchangeRateCommand : IExchangeRateCommand
+    public class ExchangeRateCommand : ICommand
     {
         private readonly IExchangeRateMessageValidator _exchangeMessageValidator;
         private readonly IExchangeRateHandler _exchangeRateHandler;
         private readonly IChatMessageSender _chatMessageSender;
-        private readonly string _name;
+
+        public CommandType CommandType => CommandType.ExchangeRate;
 
         public ExchangeRateCommand(
             IExchangeRateMessageValidator exchangeMessageValidator, 
             IExchangeRateHandler exchangeRateHandler, 
             IChatMessageSender chatMessageSender)
         {
-            _name = "/EXCHANGERATE";
             _exchangeMessageValidator = exchangeMessageValidator;
             _exchangeRateHandler = exchangeRateHandler;
             _chatMessageSender = chatMessageSender;
         }
 
-        public async Task Execute(Message message, ITelegramBotClient telegramBotClient)
+        public async Task ExecuteAsync(Message message, ITelegramBotClient telegramBotClient)
         {
-            var messageText = message.Text;
+            var messageText = message.Text.ToUpper();
 
-            _exchangeMessageValidator.SetNewInput(messageText);
+            _exchangeMessageValidator.SetNewInputRequest(messageText);
 
             if (_exchangeMessageValidator.Validate())
             {
-                _exchangeRateHandler.SetNewInput(messageText);
+                _exchangeRateHandler.SetNewRequest(messageText);
 
-                var exchangeRate = await _exchangeRateHandler.LoadExchangeRate();
+                var exchangeRate = await _exchangeRateHandler.GetExchangeRate();
 
                 if (exchangeRate != null)
                 {
-                    await _chatMessageSender.SendExchangeRateMessage(message, exchangeRate, telegramBotClient);
+                    await _chatMessageSender.SendExchangeRateMessageAsync(message, exchangeRate, telegramBotClient);
                 }
                 else
                 {
-                    await _chatMessageSender.SendUnavailableRateMessage(message, telegramBotClient);
+                    await _chatMessageSender.SendUnavailableRateMessageAsync(message, telegramBotClient);
                 }
             }
             else
             {
                 var errorMessage = _exchangeMessageValidator.GetErrorMessage();
 
-                await _chatMessageSender.SendValidationErrorMessage(message, errorMessage, telegramBotClient);
+                await _chatMessageSender.SendValidationErrorMessageAsync(message, errorMessage, telegramBotClient);
             }
-        }
-
-        public bool Contains(string command)
-        {
-            return command.Contains($"@{ BotSettings.Name }") && command.Contains(this._name);
         }
     }
 }

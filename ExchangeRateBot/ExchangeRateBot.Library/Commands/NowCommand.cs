@@ -12,25 +12,20 @@ namespace ExchangeRateBot.Library.Commands
     /// <summary>
     /// Representa a class for showing current date and time command. 
     /// </summary>
-    public class NowCommand : INowCommand
+    public class NowCommand : ICommand
     {
         private readonly IChatMessageSender _chatMessageSender;
-        private readonly string _name;
+
+        public CommandType CommandType => CommandType.Now;
 
         public NowCommand(IChatMessageSender chatMessageSender)
         {
-            _name = "/NOW";
             _chatMessageSender = chatMessageSender;
         }
 
-        public async Task Execute(Message message, ITelegramBotClient telegramBotClient)
+        public async Task ExecuteAsync(Message message, ITelegramBotClient telegramBotClient)
         {
-            await _chatMessageSender.SendNowMessage(message, telegramBotClient);
-        }
-
-        public bool Contains(string command)
-        {
-            return command.Contains($"@{ BotSettings.Name }") && command.Contains(this._name);
+            await _chatMessageSender.SendNowMessageAsync(message, telegramBotClient);
         }
     }
 }

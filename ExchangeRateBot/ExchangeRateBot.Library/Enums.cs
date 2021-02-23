@@ -75,4 +75,17 @@ namespace ExchangeRateBot
         UZS,
         GEL
     }
+
+    /// <summary>
+    /// Represents a list of command strategy command types.
+    /// </summary>
+    public enum CommandType
+    { 
+        ExchangeRate,
+        Help,
+        Now,
+        ShowCurrListBY,
+        ShowCurrListUA,
+        Start
+    }
 }

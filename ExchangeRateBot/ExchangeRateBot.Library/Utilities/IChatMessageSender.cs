@@ -10,13 +10,13 @@ namespace ExchangeRateBot.Library.Utilities
     /// </summary>
     public interface IChatMessageSender
     {
-        Task SendExchangeRateMessage(Message message, IExchangeRate exchangeRate, ITelegramBotClient telegramBotClient);
-        Task SendHelpMessage(Message message, string helpMessage, ITelegramBotClient telegramBotClient);
-        Task SendNowMessage(Message message, ITelegramBotClient telegramBotClient);
-        Task SendShowCurrListMessage(Message message, string supportedCurrencies, ITelegramBotClient telegramBotClient);
-        Task SendStartMessage(Message message, string startMessage, ITelegramBotClient telegramBotClient);
-        Task SendUnavailableRateMessage(Message message, ITelegramBotClient telegramBotClient);
-        Task SendUnrecognizedCommandMessage(Message message, ITelegramBotClient telegramBotClient);
-        Task SendValidationErrorMessage(Message message, string errorMessage, ITelegramBotClient telegramBotClient);
+        Task SendExchangeRateMessageAsync(Message message, IExchangeRate exchangeRate, ITelegramBotClient telegramBotClient);
+        Task SendHelpMessageAsync(Message message, string helpMessage, ITelegramBotClient telegramBotClient);
+        Task SendNowMessageAsync(Message message, ITelegramBotClient telegramBotClient);
+        Task SendShowCurrListMessageAsync(Message message, string supportedCurrencies, ITelegramBotClient telegramBotClient);
+        Task SendStartMessageAsync(Message message, string startMessage, ITelegramBotClient telegramBotClient);
+        Task SendUnavailableRateMessageAsync(Message message, ITelegramBotClient telegramBotClient);
+        Task SendUnrecognizedCommandMessageAsync(Message message, ITelegramBotClient telegramBotClient);
+        Task SendValidationErrorMessageAsync(Message message, string errorMessage, ITelegramBotClient telegramBotClient);
     }
 }

@@ -2,22 +2,15 @@
 using ExchangeRateBot.Library.Observers.ExchangeRateHandlerObservers;
 using ExchangeRateBot.Library.Observers.ExchangeRateObservers;
 using ExchangeRateBot.Library.Strategies;
-using ExchangeRateBot.Utilities;
+using ExchangeRateBot.Library.Utilities;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Bot.Types;
 
-namespace ExchangeRateBot.Library.Utilities
+namespace ExchangeRateBot.Tests.Observers.ExchangeRateHandlerObservers
 {
-    /// <summary>
-    /// Represents an exchange rate handler.
-    /// </summary>
-    public class ExchangeRateHandler : IExchangeRateHandler, IExchangeRateHandlerSubject
+    public class ObserverTestExchangeRateHandler : IExchangeRateHandler, IExchangeRateHandlerSubject
     {
         private readonly IEnumerable<IExchangeRateHandlerObserver> _availableObservers;
         private List<IExchangeRateHandlerObserver> _observers;
@@ -25,7 +18,7 @@ namespace ExchangeRateBot.Library.Utilities
         public IExchangeRateRequest Request { get; set; }
         public IExchangeRateHandlerStrategy Strategy { get; set; }
 
-        public ExchangeRateHandler(IEnumerable<IExchangeRateHandlerObserver> availableObservers)
+        public ObserverTestExchangeRateHandler(List<IExchangeRateHandlerObserver> availableObservers)
         {
             _observers = new List<IExchangeRateHandlerObserver>();
             _availableObservers = availableObservers;
@@ -33,43 +26,6 @@ namespace ExchangeRateBot.Library.Utilities
             AttachObservers();
         }
 
-        public async Task<IExchangeRate> GetExchangeRate()
-        {
-            Notify();
-
-            var exchangeRate = await Strategy.ExecuteAsync(Request);
-
-            return exchangeRate;
-        }
-
-        public void SetNewRequest(string requestMessage)
-        {
-            var requestDetails = requestMessage.Split(' ');
-            IExchangeRateRequest inputRequest = Factory.CreateExchangeRequest();
-
-            if (requestDetails.Length == 4)
-            {
-                inputRequest.Currency = requestDetails[2];
-                inputRequest.Date = DateTime.ParseExact(
-                        requestDetails[3], "yyyy-MM-dd",
-                        System.Globalization.CultureInfo.InvariantCulture
-                        );
-                inputRequest.Country = "UA";
-
-                Request = inputRequest;
-            }
-            else
-            {
-                inputRequest.Currency = requestDetails[2];
-                inputRequest.Date = DateTime.ParseExact(
-                        requestDetails[3], "yyyy-MM-dd",
-                        System.Globalization.CultureInfo.InvariantCulture
-                        );
-                inputRequest.Country = requestDetails[4];
-
-                Request = inputRequest;
-            }
-        }
 
         public void Attach(IExchangeRateHandlerObserver observer)
         {
@@ -87,6 +43,13 @@ namespace ExchangeRateBot.Library.Utilities
             }
         }
 
+        public Task<IExchangeRate> GetExchangeRate()
+        {
+            Notify();
+
+            return null;
+        }
+
         public void Notify()
         {
             if (_observers.Count > 0)
@@ -95,6 +58,36 @@ namespace ExchangeRateBot.Library.Utilities
                 {
                     observer.Update(this);
                 }
+            }
+        }
+
+        public void SetNewRequest(string requestMessage)
+        {
+            var requestDetails = requestMessage.Split(' ');
+
+            if (requestDetails.Length == 4)
+            {
+                Request = new ExchangeRateRequest
+                {
+                    Currency = requestDetails[2],
+                    Date = DateTime.ParseExact(
+                        requestDetails[3], "yyyy-MM-dd",
+                        System.Globalization.CultureInfo.InvariantCulture
+                        ),
+                    Country = "UA"
+                };
+            }
+            else
+            {
+                Request = new ExchangeRateRequest
+                {
+                    Currency = requestDetails[2],
+                    Date = DateTime.ParseExact(
+                    requestDetails[3], "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture
+                    ),
+                    Country = requestDetails[4]
+                };
             }
         }
 

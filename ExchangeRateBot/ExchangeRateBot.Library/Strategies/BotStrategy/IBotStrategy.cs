@@ -1,27 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace ExchangeRateBot.Library.Commands
+namespace ExchangeRateBot.Library.Strategy
 {
     /// <summary>
-    /// Represents a command interface.
+    /// Represents a command strategy interface.
     /// </summary>
-    public interface ICommand
+    public interface IBotStrategy
     {
         /// <summary>
-        /// Represents command type.
+        /// Represents current telegram bot command type.
         /// </summary>
-        CommandType CommandType { get; }
+        public CommandType CommandType { get; set; }
 
         /// <summary>
-        /// Executes the command asynchronously.
+        /// Execites the command strategy asynchronously.
         /// </summary>
         /// <param name="message">Chat message.</param>
         /// <param name="telegramBotClient">Telergam bot client.</param>
+        /// <param name="commandType">Command type.</param>
         Task ExecuteAsync(Message message, ITelegramBotClient telegramBotClient);
     }
 }

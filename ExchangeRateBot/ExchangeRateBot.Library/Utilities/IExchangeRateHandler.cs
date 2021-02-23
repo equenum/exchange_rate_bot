@@ -12,11 +12,11 @@ namespace ExchangeRateBot.Library.Utilities
         /// Loads exchange rate.
         /// </summary>
         /// <returns>Exchange rate.</returns>
-        Task<IExchangeRate> LoadExchangeRate();
+        Task<IExchangeRate> GetExchangeRate();
         /// <summary>
-        /// Sets a new chat input value for loading.
+        /// Sets a new chat input exchange rate request for loading.
         /// </summary>
-        /// <param name="inputMessage">Chat input value.</param>
-        void SetNewInput(string inputMessage);
+        /// <param name="inputMessage">Chat input exchange rate request.</param>
+        void SetNewRequest(string inputMessage);
     }
 }

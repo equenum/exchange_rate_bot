@@ -9,9 +9,12 @@ using ExchangeRateBot.Library.Models;
 
 namespace ExchangeRateBot.Library.Utilities
 {
+    /// <summary>
+    /// Represents a chat message sender.
+    /// </summary>
     public class ChatMessageSender : IChatMessageSender
     {
-        public async Task SendUnrecognizedCommandMessage(Message message, ITelegramBotClient telegramBotClient)
+        public async Task SendUnrecognizedCommandMessageAsync(Message message, ITelegramBotClient telegramBotClient)
         {
             await telegramBotClient.SendTextMessageAsync(
                         chatId: message.Chat,
@@ -22,7 +25,7 @@ namespace ExchangeRateBot.Library.Utilities
                     );
         }
 
-        public async Task SendExchangeRateMessage(Message message, IExchangeRate exchangeRate, ITelegramBotClient telegramBotClient)
+        public async Task SendExchangeRateMessageAsync(Message message, IExchangeRate exchangeRate, ITelegramBotClient telegramBotClient)
         {
             await telegramBotClient.SendTextMessageAsync(
                         chatId: message.Chat,
@@ -34,7 +37,7 @@ namespace ExchangeRateBot.Library.Utilities
                     );
         }
 
-        public async Task SendUnavailableRateMessage(Message message, ITelegramBotClient telegramBotClient)
+        public async Task SendUnavailableRateMessageAsync(Message message, ITelegramBotClient telegramBotClient)
         {
             await telegramBotClient.SendTextMessageAsync(
                         chatId: message.Chat,
@@ -45,7 +48,7 @@ namespace ExchangeRateBot.Library.Utilities
                     );
         }
 
-        public async Task SendValidationErrorMessage(Message message, string errorMessage, ITelegramBotClient telegramBotClient)
+        public async Task SendValidationErrorMessageAsync(Message message, string errorMessage, ITelegramBotClient telegramBotClient)
         {
             await telegramBotClient.SendTextMessageAsync(
                         chatId: message.Chat,
@@ -56,7 +59,7 @@ namespace ExchangeRateBot.Library.Utilities
                     );
         }
 
-        public async Task SendHelpMessage(Message message, string helpMessage, ITelegramBotClient telegramBotClient)
+        public async Task SendHelpMessageAsync(Message message, string helpMessage, ITelegramBotClient telegramBotClient)
         {
             await telegramBotClient.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -67,7 +70,7 @@ namespace ExchangeRateBot.Library.Utilities
                     );
         }
 
-        public async Task SendNowMessage(Message message, ITelegramBotClient telegramBotClient)
+        public async Task SendNowMessageAsync(Message message, ITelegramBotClient telegramBotClient)
         {
             await telegramBotClient.SendTextMessageAsync(
                        chatId: message.Chat,
@@ -78,7 +81,7 @@ namespace ExchangeRateBot.Library.Utilities
                    );
         }
 
-        public async Task SendShowCurrListMessage(Message message, string supportedCurrencies, ITelegramBotClient telegramBotClient)
+        public async Task SendShowCurrListMessageAsync(Message message, string supportedCurrencies, ITelegramBotClient telegramBotClient)
         {
             await telegramBotClient.SendTextMessageAsync(
                        chatId: message.Chat.Id,
@@ -89,7 +92,7 @@ namespace ExchangeRateBot.Library.Utilities
                    );
         }
 
-        public async Task SendStartMessage(Message message, string startMessage, ITelegramBotClient telegramBotClient)
+        public async Task SendStartMessageAsync(Message message, string startMessage, ITelegramBotClient telegramBotClient)
         {
             await telegramBotClient.SendTextMessageAsync(
                        chatId: message.Chat.Id,

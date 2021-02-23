@@ -11,29 +11,24 @@ namespace ExchangeRateBot.Library.Commands
     /// <summary>
     /// Represents a start command.
     /// </summary>
-    public class StartCommand : IStartCommand
+    public class StartCommand : ICommand
     {
         private readonly IChatMessageSender _chatMessageSender;
-        private readonly string _name;
+
+        public CommandType CommandType => CommandType.Start;
 
         public StartCommand(IChatMessageSender chatMessageSender)
         {
-            _name = "/START";
             _chatMessageSender = chatMessageSender;
         }
 
-        public async Task Execute(Message message, ITelegramBotClient telegramBotClient)
+        public async Task ExecuteAsync(Message message, ITelegramBotClient telegramBotClient)
         {
             string startMessage = $"Hello! I can help you get exchange rate records\n" +
                                   $"from Belarusian and Ukrainian national banks archives.\n\n" +
                                   $"Use /help to get instructions.";
 
-            await _chatMessageSender.SendStartMessage(message, startMessage, telegramBotClient);
-        }
-
-        public bool Contains(string command)
-        {
-            return command.Contains($"@{ BotSettings.Name }") && command.Contains(this._name);
+            await _chatMessageSender.SendStartMessageAsync(message, startMessage, telegramBotClient);
         }
     }
 }
