@@ -20,7 +20,11 @@ There are some additional project details (architecture, technologies/patterns u
 - Command pattern;
 - Strategy pattern;
 - Observer pattern;
-- Unit-testing (MSTest);
+- Unit-testing (MSTest).
+
+Tools used:
+- Postman;
+- Telerik Fiddler Web Debugger.
 
 
 # Demo:
