@@ -6,7 +6,7 @@ A simple telegram bot that can help you to get exchange rate records from Belaru
 This application has the following architecture:
 
 - Presentation layer: Console Application (C#, .NET Core);
-- Business layer: Class Library (C#, .NET Core);
+- Business layer: Class Library (C#, .NET Core).
 
 There are some additional project details (architecture, technologies/patterns used, etc.):
 - Telegram.Bot Library for Telegram API (https://github.com/TelegramBots/Telegram.Bot);
